@@ -1,21 +1,28 @@
 using FarmGameNetCore.Module.PlantModule.Interfaces;
+using FarmGameNetCore.Module.PlantModule.PlantStates;
 using FarmGameNetCore.Module.SeasonModule.Interfaces;
 
 namespace FarmGameNetCore.Module.PlantModule;
 
 public class Plant: ICyclePlant
 {
+    // Define chain of state
+    private List<IPlantState> _stateChain = new List<IPlantState>();
+    private int _currentStateIndex = 0;
+    private ulong _currentStateProcess = 0;
+    
+    public ulong GetCurrentStateProcess => _currentStateProcess;
+    
     protected ISeasonBehavior? _iSeasonBehavior;
     public string Name { get; set; }
-
     public ulong TimeLife { get; set; }
-
+    
     private PlantStatus _status;
-
+    
     public PlantStatus Status
     {
         get => _status;
-        set => _status = value ?? throw new ArgumentNullException(nameof(value));
+        set => _status = value;
     }
     protected Plant()
     {
@@ -31,33 +38,47 @@ public class Plant: ICyclePlant
         this.TimeLife = timeLife;
     }
     
-    public virtual void Seeding()
+    protected Plant(List<IPlantState> stateChain)
     {
-
-        this._status = PlantStatus.Seeding;
+        Console.WriteLine("Plant set chain");
+        _stateChain = stateChain;
     }
-
-    public virtual void Sprouting()
-    {
-        this._status = PlantStatus.SmallPlant;
-    }
-
-    public virtual void Flowing()
-    {
-        this._status = PlantStatus.Blooming;
-    }
-
-    public virtual void Destroy()
-    {
-    }
-
-    public virtual void StopGrowing()
-    {
-        this._status = PlantStatus.StopGrowing;    
-    }
-
+    
     public bool PlantCanGrowInSeason()
     {
         return _iSeasonBehavior.IsInSeason();
+    }
+    
+    public virtual void Growing()
+    {
+        // process grow here
+        // check can growing ?
+        this.TimeLife++;
+        if (PlantCanGrowInSeason())
+        {
+            // check time
+            this._currentStateProcess++;
+            this.MoveToNextState();
+        }
+    }
+    
+    /*
+     * Move to the next state in the state chain
+     * Reset _currentStateProcess
+     */
+    public void MoveToNextState()
+    {
+        if (_currentStateIndex < _stateChain.Count && 
+            _stateChain[_currentStateIndex].GetLimitProcessState() == _currentStateProcess) 
+        {
+            IPlantState currentState = _stateChain[_currentStateIndex++];
+            currentState.NextState(this);
+            ResetCurrentStateProcess();
+        }
+    }
+    
+    public void ResetCurrentStateProcess()
+    {
+        this._currentStateProcess = 0;
     }
 }

@@ -1,10 +1,16 @@
+using FarmGameNetCore.Module.CommonModule;
 using FarmGameNetCore.Module.PlantModule.Interfaces;
-using FarmGameNetCore.Module.PlantModule.Seeds;
 
-namespace FarmGameNetCore.Module.PlantModule.Soil;
+namespace FarmGameNetCore.Module.PlantModule.Soils;
 
 public class Soil: ISoilBehavior
 {
+    public Soil()
+    {
+        Thread interval = new Thread(new ThreadStart(Interval));
+        interval.Start();
+    }
+    
     public Crop? Crop { set; get; }
     
     private ulong AmountWater { get; set; }
@@ -13,7 +19,7 @@ public class Soil: ISoilBehavior
     private uint AmountBug { get; set; }
     private uint AmountGrass { get; set; }
 
-    public void Sow(Seed seed)
+    public void Sow(Seeds.Seed seed)
     {
         this.Crop = seed.GetCrop();
     }
@@ -53,5 +59,25 @@ public class Soil: ISoilBehavior
     public void IncreaseGrass(uint amount)
     {
         this.AmountGrass += 0;
+    }
+    
+    // Interval runtime
+    private void Interval()
+    {
+        while (GameController.Runing)
+        {
+            // Console.WriteLine("Soil Interval");
+            // if have Crop check can grow ??
+            if (Crop is not null && Crop.PlantCanGrowInSeason())
+            {
+                Console.WriteLine("[Soil Interval] {0} PlantCanGrowInSeason", Crop.Name);
+                // Console.WriteLine("[Soil Interval] Plant Status is {0}", Crop.Status);
+                // Start grow
+                Crop.Growing();
+                Console.WriteLine("[Soil Interval] Plant Time life is {0}", Crop.TimeLife);
+
+                Thread.Sleep(1000);
+            }
+        }
     }
 }

@@ -6,9 +6,4 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-      <Folder Include="Module\CommonModule\Interfaces\" />
-      <Folder Include="Module\RecipeModule\" />
-    </ItemGroup>
-
 </Project>

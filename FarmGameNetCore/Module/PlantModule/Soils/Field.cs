@@ -1,4 +1,4 @@
-namespace FarmGameNetCore.Module.PlantModule.Soil;
+namespace FarmGameNetCore.Module.PlantModule.Soils;
 
 public class Field<T> where T: struct 
 {
@@ -8,7 +8,6 @@ public class Field<T> where T: struct
     {
         this._soils = new Dictionary<T, Soil>();
     }
-
 
     public void AddSoil(T t)
     {

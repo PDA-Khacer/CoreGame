@@ -1,10 +1,8 @@
-using FarmGameNetCore.Module.PlantModule.Seeds;
-
 namespace FarmGameNetCore.Module.PlantModule.Interfaces;
 
 public interface ISoilBehavior
 {
-    public abstract void Sow(Seed seed);
+    public abstract void Sow(Seeds.Seed seed);
     public abstract void Dig();
     public abstract void GiveWater(ulong amount);
     public abstract void GiveFertilizer(ulong amount);

@@ -1,4 +1,4 @@
-using FarmGameNetCore.Module.PlantModule.VegetablePlant.Tomatoes;
+using FarmGameNetCore.Module.PlantModule.VegetablePlants.Tomatoes;
 
 namespace FarmGameNetCore.Module.PlantModule.Seeds;
 
